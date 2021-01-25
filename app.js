@@ -7,7 +7,8 @@ const path = require('path');
 const Campground = require('./models/campgrounds');
 const ExpressError = require('./utils/ExpressError');
 const catchAsync = require('./utils/catchAsync');
-const { campgroundSchema } = require('./schemas');
+const { campgroundSchema, reviewSchema } = require('./schemas');
+const Review = require('./models/review');
 
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
@@ -36,9 +37,24 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
 
+// Validates sumbitted campground
 const validateCampground = (req, res, next) => {
 
     const result = campgroundSchema.validate(req.body);
+    if (result.error) {
+        const errMsg = result.error.details.map(err => err.message);
+        throw new ExpressError(errMsg, 400);
+    }
+    else {
+        next();
+    }
+}
+
+
+// Validates user sumbitted reviews
+const validateReview = (req, res, next) => {
+
+    const result = reviewSchema.validate(req.body);
     if (result.error) {
         const errMsg = result.error.details.map(err => err.message);
         throw new ExpressError(errMsg, 400);
@@ -84,7 +100,7 @@ app.post('/campgrounds', validateCampground, catchAsync(async (req, res) => {
 // Shows specific detail about a campgrounds
 app.get('/campgrounds/:id', catchAsync(async (req, res) => {
 
-    const campground = await Campground.findById(req.params.id);
+    const campground = await Campground.findById(req.params.id).populate('review');
 
     res.render('campgrounds/show', { campground });
 }));
@@ -109,6 +125,7 @@ app.put('/campgrounds/:id', catchAsync(async (req, res) => {
     res.redirect(`/campgrounds/${updatedCampground._id}`);
 }));
 
+
 // Deletes existing campground 
 app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
 
@@ -118,12 +135,38 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
 }));
 
 
+// Appends user review for a particular campground
+app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res) => {
+
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.review.push(review);
+    await review.save();
+    await campground.save();
+
+    res.redirect(`/campgrounds/${campground._id}`);
+}));
+
+
+// Delete a review from a campground
+app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async (req, res) => {
+
+    const { id, reviewId } = req.params;
+    await Campground.findByIdAndUpdate(id, { $pull: { review: reviewId } });
+    await Review.findByIdAndDelete(reviewId);
+
+    res.redirect(`/campgrounds/${id}`);
+
+}));
+
+// Displays a 404, if requested page is invalid 
 app.all('*', (req, res, next) => {
 
     next(new ExpressError("Page Not Found", 404));
 });
 
 
+// Error checking middleware
 app.use((err, req, res, next) => {
 
     const { statusCode = 500 } = err;
