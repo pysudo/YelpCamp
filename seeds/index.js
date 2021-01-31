@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const cities = require('./cities');
 const { descriptors, places } = require('./seedHelpers');
-const Campground = require('../models/campgrounds');
+const Campground = require('../models/campground');
 
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
@@ -23,6 +23,7 @@ const seedDB = async () => {
     await Campground.deleteMany({});
     for (let i = 0; i < 50; i++) {
         const newSample = new Campground({
+            author: '6016da1d9ee66e5511d6a91f',
             location: `${sample(cities).city}, ${sample(cities).state}`,
             title: `${sample(descriptors)} ${sample(places)}`,
             image: 'https://source.unsplash.com/1200x500/?woods,nature,camp',

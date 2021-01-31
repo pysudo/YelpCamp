@@ -67,7 +67,7 @@ app.use((req, res, next) => {
    
     // Deals with redirects after successfull login to previously requested URL
     // This occurs if the user tries to access resource unauthenticated. 
-    if(!['/login', '/'].includes(req.originalUrl)) {
+    if(!['/login', '/', '/logout', '/register'].includes(req.originalUrl)) {
         req.session.redirectUrl = req.originalUrl;
     }
 
