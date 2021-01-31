@@ -1,9 +1,10 @@
 const express = require('express');
 
-const Campground = require('../models/campgrounds');
+const Campground = require('../models/campground');
 const { campgroundSchema } = require('../schemas');
 const ExpressError = require('../utils/ExpressError');
 const catchAsync = require('../utils/catchAsync');
+const { checkAuthentication } = require('../utils/checkAuthentication')
 
 
 const router = express.Router();
@@ -33,14 +34,14 @@ router.get('/', catchAsync(async (req, res) => {
 
 
 // Renders form to append new campgrounds
-router.get('/new', (req, res) => {
+router.get('/new', checkAuthentication, (req, res) => {
 
     res.render('campgrounds/new');
 });
 
 
 // Append new campgrounds
-router.post('/', validateCampground, catchAsync(async (req, res) => {
+router.post('/', checkAuthentication, validateCampground, catchAsync(async (req, res) => {
 
     const campground = new Campground(req.body.campground);
     await campground.save();
@@ -54,7 +55,7 @@ router.post('/', validateCampground, catchAsync(async (req, res) => {
 router.get('/:id', catchAsync(async (req, res) => {
 
     const campground = await Campground.findById(req.params.id).populate('review');
-    if (!campground ) {
+    if (!campground) {
         req.flash('error', 'The campground was not found!');
         return res.redirect(`/campgrounds`);
     }
@@ -64,10 +65,10 @@ router.get('/:id', catchAsync(async (req, res) => {
 
 
 // Renders form to edit campground
-router.get('/:id/edit', catchAsync(async (req, res) => {
+router.get('/:id/edit', checkAuthentication, catchAsync(async (req, res) => {
 
     const campground = await Campground.findById(req.params.id);
-    if (!campground ) {
+    if (!campground) {
         req.flash('error', 'The campground was not found!');
         return res.redirect(`/campgrounds`);
     }
