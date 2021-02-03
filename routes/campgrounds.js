@@ -1,4 +1,6 @@
 const express = require('express');
+const multer = require('multer');
+
 
 const catchAsync = require('../utils/catchAsync');
 const {
@@ -7,8 +9,10 @@ const {
     checkCampAuth
 } = require('../utils/middlewares')
 const campgrounds = require('../controllers/campgrounds');
+const { storage } = require('../cloudinary');
 
 
+const upload = multer({ storage });
 const router = express.Router();
 
 
@@ -17,6 +21,7 @@ router.route('/')
     .post
     (
         checkAuthentication,
+        upload.array('image'), // comes after validateCampground when in production
         validateCampground,
         catchAsync(campgrounds.createCampground)
     );
