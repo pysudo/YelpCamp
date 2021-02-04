@@ -1,4 +1,5 @@
 const Campground = require('../models/campground');
+const { cloudinary } = require('../cloudinary')
 
 
 // Diplays the list of campgrounds
@@ -19,9 +20,9 @@ module.exports.renderNewForm = (req, res) => {
 
 // Append new campgrounds
 module.exports.createCampground = async (req, res) => {
-  
+
     const campground = new Campground(req.body.campground);
-    campground.images = req.files.map(file => ({url: file.path, filename: file.filename}));
+    campground.images = req.files.map(file => ({ url: file.path, filename: file.filename }));
     campground.author = req.user;
     await campground.save();
 
@@ -78,10 +79,19 @@ module.exports.editCampground = async (req, res) => {
         (
             id,
             editedCampground,
-            {
-                new: true
-            }
         );
+    const images = req.files.map(file => ({ url: file.path, filename: file.filename }));
+    updatedCampground.images.push(...images);
+    await updatedCampground.save();
+
+    // After deleting URL reference from mongo, procceed to delete in cloudinary  
+    if (req.body.deleteImages) {
+
+        await updatedCampground.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
+        for (let filename of req.body.deleteImages) {
+            cloudinary.uploader.destroy(filename);
+        }
+    }
 
     req.flash('success', 'Successfully updated the campground!');
     res.redirect(`/campgrounds/${updatedCampground._id}`);

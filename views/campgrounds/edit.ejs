@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-6 offset-3">
         <h1 class="text-center">New Campground</h1>        
-        <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST" class="validated-form" novalidate>
+        <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST" class="validated-form" enctype="multipart/form-data" novalidate>
             <div class="mb-3">
                 <label class="form-label" for="title">Title</label>
                 <input class="form-control" type="text" id="title" name="campground[title]" value="<%= campground.title %>" required>
@@ -15,13 +15,6 @@
             <div class="mb-3">
                 <label class="form-label" for="location">Location</label>
                 <input class="form-control" type="text" id="location" name="campground[location]" value="<%= campground.location %>" required>
-                <div class="valid-feedback">
-                    Looks good!
-                </div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="image">Image Url</label>
-                <input class="form-control" type="text" id="image" name="campground[image]" value="<%= campground.image %>" required>
                 <div class="valid-feedback">
                     Looks good!
                 </div>
@@ -42,6 +35,20 @@
                 <div class="valid-feedback">
                     Looks good!
                 </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="image">Add more image(s)...</label>
+                <input class="form-control" type="file" id="image" name="image" value="<%= campground.image %>" multiple required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+            <div class="mb-3">
+                <% campground.images.forEach((image, ind) => { %>
+                    <img class="img-thumbnail" src="<%= image.thumbnail %>" alt="">
+                    <input id="image-<%= ind %>" type="checkbox" name="deleteImages[]" value="<%= image.filename %>">
+                    <label for="image-<%= ind %>">Delete ?</label>
+                <% }) %> 
             </div>
             <div class="mb-3">
                 <button class="btn btn-success">Edit campground</button>

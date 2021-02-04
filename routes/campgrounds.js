@@ -36,6 +36,7 @@ router.route('/:id')
     (
         checkAuthentication,
         checkCampAuth,
+        upload.array('image'), // comes after validateCampground when in production
         validateCampground,
         catchAsync(campgrounds.editCampground)
     )
