@@ -5,9 +5,23 @@
 <div class="row">
     <div class="col-6">
         <div class="card">
-            <% for(let image of campground.images) { %> 
-            <img src="<%= image.url %>" class="card-img-top" alt="...">
-            <% } %> 
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <% campground.images.forEach((image, ind) => { %> 
+                        <div class="carousel-item <%= ind === 0 ? "active" : "" %>"> 
+                            <img src="<%= image.url %>" class="d-block w-100" alt="">
+                        </div>
+                    <% }); %> 
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </a>
+            </div>
             <div class="card-body">
                 <h5 class="card-title"><%= campground.title %></h5>
                 <p class="card-text"><%= campground.description %></p>
@@ -72,7 +86,7 @@
                                 </button>
                             </form>
                         <% } %> 
-                    </div>
+                    </div>  
                 </div>  
             <% } %>
     </div> 
