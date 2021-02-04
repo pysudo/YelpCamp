@@ -3,14 +3,17 @@ const Review = require('./review');
 const Schema = mongoose.Schema;
 
 
+const imagesSchema = Schema({
+
+    url: String,
+    filename: String
+})
+
+
 const campgroundsSchema = Schema({
+
     title: String,
-    images: [
-        {
-            url: String,
-            filename: String
-        }
-    ],
+    images: [imagesSchema],
     price: Number,
     description: String,
     location: String,
@@ -25,6 +28,11 @@ const campgroundsSchema = Schema({
             ref: 'Review'
         }
     ]
+});
+
+
+imagesSchema.virtual('thumbnail').get(function() {
+    return this.url.replace('upload/', 'upload/w_200/');
 });
 
 
