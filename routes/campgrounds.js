@@ -1,7 +1,6 @@
 const express = require('express');
 const multer = require('multer');
 
-
 const catchAsync = require('../utils/catchAsync');
 const {
     validateCampground,
@@ -12,8 +11,8 @@ const campgrounds = require('../controllers/campgrounds');
 const { storage } = require('../cloudinary');
 
 
-const upload = multer({ storage });
 const router = express.Router();
+const upload = multer({ storage });
 
 
 router.route('/')
