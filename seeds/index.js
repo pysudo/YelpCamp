@@ -24,7 +24,11 @@ const seedDB = async () => {
     for (let i = 0; i < 50; i++) {
         const newSample = new Campground({
             author: '6016da1d9ee66e5511d6a91f',
-            geometry : { "type" : "Point", "coordinates" : [ -99.000178, 19.235793 ] },
+            geometry : 
+            { 
+                "type" : "Point",
+                "coordinates" : [ parseInt(`${sample(cities).longitude}`), parseInt(`${sample(cities).latitude}`) ] 
+            },
             location: `${sample(cities).city}, ${sample(cities).state}`,
             title: `${sample(descriptors)} ${sample(places)}`,
             images:[
