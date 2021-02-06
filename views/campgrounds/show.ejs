@@ -94,6 +94,6 @@
 </div>
 <script>
     let accessToken = "<%- process.env.MAPBOX_TOKEN %>";
-    let coordinates = <%- JSON.stringify(campground.geometry.coordinates) %>;
+    let campground = <%- JSON.stringify(campground) %>;
 </script>
 <script src="/js/showPageMap.js"></script>
