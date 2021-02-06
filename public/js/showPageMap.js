@@ -1,10 +1,14 @@
 mapboxgl.accessToken = accessToken;
 const map = new mapboxgl.Map({
-    container: 'map',
+    container: 'showPageMap',
     style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
     center: campground.geometry.coordinates, // starting position [lng, lat]
     zoom: 9 // starting zoom
 });
+
+// Map control for navigation 
+const navControls = new mapboxgl.NavigationControl({visualizePitch: true});
+map.addControl(navControls, 'top-left');
 
 const marker = new mapboxgl.Marker()
     .setLngLat(campground.geometry.coordinates)
