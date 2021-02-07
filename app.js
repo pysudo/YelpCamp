@@ -1,6 +1,4 @@
-if(process.env.NODE_ENV !== "production") {
-    require('dotenv').config()
-}
+require('dotenv').config()
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -55,9 +53,11 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
+        name: 'session',
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge:  1000 * 60 * 60 * 24 * 7,
-        httpOnly: true
+        httpOnly: true,
+        // secure: true Must be enabled during deployment for connection over HTTPS
     }
 }));
 app.use(flash());
