@@ -18,6 +18,8 @@ module.exports.listCampgrounds = async (req, res) => {
 // Renders form to append new campgrounds
 module.exports.renderNewForm = (req, res) => {
 
+    console.log(req.query)
+
     res.render('campgrounds/new');
 }
 

@@ -17,6 +17,7 @@ const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 const User = require('./models/user');
+const mongoSanitize = require('express-mongo-sanitize');
 
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
@@ -62,6 +63,7 @@ app.use(session({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(mongoSanitize());
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
