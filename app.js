@@ -32,9 +32,9 @@ mongoose.connect(`${db}`, {
 });
 
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
+const dbStatus = mongoose.connection;
+dbStatus.on('error', console.error.bind(console, 'connection error:'));
+dbStatus.once('open', function () {
     // connected!
     console.log("Database connected");
 });
@@ -171,9 +171,10 @@ app.use((err, req, res, next) => {
 });
 
 
-// Starts up localhost
-app.listen(3000, () => {
+// Serves either on host assigned port or default development port of 3000
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
 
-    console.log("Serving on port 3000.");
+    console.log(`Serving on port ${port}.`);
 });
 
