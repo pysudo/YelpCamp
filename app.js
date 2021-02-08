@@ -20,9 +20,11 @@ const User = require('./models/user');
 const mongoSanitize = require('express-mongo-sanitize');
 
 
-// const dbUrl = process.env.DB_URL;
+const dbUrl = process.env.DB_URL;
 const localDB = "mongodb://localhost:27017/yelp-camp"
-mongoose.connect(`${localDB}`, {
+
+const db = dbUrl || localDB
+mongoose.connect(`${db}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
@@ -51,8 +53,10 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
+
+const secret = process.env.SESSION_SECRET; 
 app.use(session({
-    secret: 'asdasdasdasd',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -63,7 +67,8 @@ app.use(session({
         // secure: true Must be enabled during deployment for connection over HTTPS
     },
     store: new MongoStore({
-        url: localDB,
+        secret,
+        url: db,
         touchAfter: 24 * 60 * 60
     })
 }));
